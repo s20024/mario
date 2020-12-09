@@ -13,15 +13,31 @@
         const CANVAS = document.getElementById("canvas");
         const CONTEXT = CANVAS.getContext("2d")
 
+        document.addEventListener("keydown", move_mario);
+        // document.addEventListener("keyup", movemove)
+
         function drawField(test){
             CONTEXT.clearRect(0, 0, 1600, 800);
             for (let i = 0; i < 16; i++){
                 for (let j = 0; j < 16; j++){
                     if (test[i][j] != "affffff"){
                         CONTEXT.fillStyle = test[i][j];
-                        CONTEXT.fillRect(j * 5, i * 5, 5, 5);
+                        CONTEXT.fillRect(j * 5 + position[0] * 80, i * 5 + position[1] * 80, 5, 5);
                     }
                 }
+            }
+        }
+
+        function move_mario(e){
+            if (e.key == "ArrowDown") {
+                down_speed = 0.2;
+            } else if (e.key == "ArrowRight") {
+                mairo_now = mario_run_right1;
+                position[0] = position[0] + 0.1;
+                mairo_now = mario_run_right2;
+                drawField(mairo_now)
+            } else if (e.key == "ArrowLeft"){
+                position[0] = position[0] - 0.1;
             }
         }
 
@@ -115,16 +131,17 @@
             ["affffff", "affffff", "affffff", "affffff", "#9e8318", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "#9e8318", "affffff", "affffff", "affffff", "affffff"],
             ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"]
         ]
-
+        let mairo_now = mario_normal_right;
 
         let down_speed = 0.02;
+        let position = [6, 7];
 
         let count = 0;
         function pri(){
-            drawField(mario_deth)
+            drawField(mairo_now)
         }
 
-        let timer = setInterval(pri, 100);
+        let timer = setInterval(pri, 1);
         drawField(fieldee)
     </script>
     
