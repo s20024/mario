@@ -10,21 +10,90 @@
         <canvas width="1600" height="800" id="canvas" style="border:1px solid black"></canvas>
     </div>
     <script>
+        // 初期設定~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // canvasの設定
         const CANVAS = document.getElementById("canvas");
         const CONTEXT = CANVAS.getContext("2d")
 
+        // 入力値の取得の設定
+        document.addEventListener("keydown", move_mario);
+        document.addEventListener("keyup", stop_mario)
+
+
+
+        // 関数~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // 画面出力する関数
         function drawField(test){
             CONTEXT.clearRect(0, 0, 1600, 800);
             for (let i = 0; i < 16; i++){
                 for (let j = 0; j < 16; j++){
                     if (test[i][j] != "affffff"){
                         CONTEXT.fillStyle = test[i][j];
-                        CONTEXT.fillRect(j * 5 + 480, i * 5 + 560, 5, 5);
+                        CONTEXT.fillRect(j * 5 + position[0] * 80, i * 5 + position[1] * 80, 5, 5);
                     }
                 }
             }
         }
 
+
+        // 入力を受け取り、右左にマリオを動かす関数
+        function move_mario(e){
+            if (e.key == "ArrowDown") {
+                down_speed = 0.2;
+            } else if (e.key == "ArrowRight") {
+                mario_now = mario_run_right1;
+                if (run_number == 1){
+                    mario_now = mario_run_right1;
+                    run_number = 2;
+                } else{
+                    mario_now = mario_run_right2;
+                    run_number = 1;
+                }
+                position[0] = position[0] + 0.2;
+                drawField(mario_now)
+
+            } else if (e.key == "ArrowLeft"){
+                mario_now = mario_run_left1;
+                if (run_number == 1){
+                    mario_now = mario_run_left1;
+                    run_number = 2;
+                } else{
+                    mario_now = mario_run_left2;
+                    run_number = 1;
+                }
+                position[0] = position[0] - 0.2;
+            }
+        }
+
+
+        // 入力が終わった後マリオの描写を治す関数
+        function stop_mario(e){
+            if (e.key == "ArrowRight"){
+                mario_now = mario_normal_right;
+            } else if (e.key == "ArrowLeft"){
+                mario_now = mario_normal_left;
+            }
+        }
+
+
+        // マリオの反転を作る関数
+        function rev (original) {
+            temp_list = [];
+            for (let i = 0; i < 16; i ++){
+                temp_split_list = [];
+                for (let j = 15; 0 <= j; j --){
+                    temp_split_list.push(original[i][j]);
+                }
+                temp_list.push(temp_split_list);
+            }
+            return temp_list;
+        }
+
+
+
+        // データの作成~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        // 右を向いているマリオ
         let mario_normal_right = [
             ["affffff", "affffff", "affffff", "affffff", "affffff", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
             ["affffff", "affffff", "affffff", "affffff", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "affffff", "affffff", "affffff"],
@@ -43,6 +112,11 @@
             ["affffff", "affffff", "affffff", "#9e8318", "#9e8318", "#9e8318", "affffff", "affffff", "affffff", "affffff", "#9e8318", "#9e8318", "#9e8318", "affffff", "affffff", "affffff"],
             ["affffff", "affffff", "#9e8318", "#9e8318", "#9e8318", "#9e8318", "affffff", "affffff", "affffff", "affffff", "#9e8318", "#9e8318", "#9e8318", "#9e8318", "affffff", "affffff"]
         ]
+
+        // 左を向いているマリオ
+        let mario_normal_left = rev(mario_normal_right)
+
+        // 右に走っているマリオ1
         let mario_run_right1 = [
             ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
             ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "affffff", "affffff", "affffff", "affffff", "affffff"],
@@ -61,6 +135,10 @@
             ["affffff", "affffff", "#9e8318", "affffff", "affffff", "affffff", "affffff", "#9e8318", "#9e8318", "#9e8318", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
             ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#9e8318", "#9e8318", "#9e8318", "#9e8318", "affffff", "affffff", "affffff", "affffff", "affffff"]
         ]
+        // 左を向いて走っているマリオ1
+        let mario_run_left1 = rev(mario_run_right1)
+
+        // 右を向いて走っているマリオ2
         let mario_run_right2 = [
             ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "affffff", "affffff", "affffff", "affffff", "affffff"],
             ["affffff", "affffff", "affffff", "affffff", "affffff", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "affffff", "affffff"],
@@ -79,6 +157,11 @@
             ["affffff", "affffff", "#9e8318", "#9e8318", "#9e8318", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
             ["affffff", "affffff", "affffff", "#9e8318", "#9e8318", "#9e8318", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"]
         ]
+
+        // 左を向いて走っているマリオ2
+        let mario_run_left2 = rev(mario_run_right2)
+        
+        // 右を向いてジャンプしているマリオ
         let mario_jump_right = [
             ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#ffc07b", "#ffc07b", "#ffc07b"],
             ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "affffff", "affffff", "#ffc07b", "#ffc07b", "#ffc07b"],
@@ -97,6 +180,11 @@
             ["affffff", "#9e8318", "#9e8318", "#9e8318", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "affffff", "affffff", "affffff", "affffff", "affffff"],
             ["affffff", "#9e8318", "affffff", "affffff", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"]
         ]
+
+        // 左を向いてジャンプしているマリオ
+        let mario_jump_left = rev(mario_jump_right)
+
+        // ですするときのマリオ
         let mario_deth = [
             ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
             ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#f7461c", "#f7461c", "#f7461c", "#f7461c", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
@@ -117,15 +205,23 @@
         ]
 
 
-        let down_speed = 0.02;
+
+        // 本体コード~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // プリントするマリオの設定
+        let mario_now = mario_normal_right;
+
+        // 走るマリオの番号
+        let run_number = 1;
+
+        // マリオの初期ポジション
+        let position = [6, 7];
 
         let count = 0;
         function pri(){
-            drawField(mario_deth)
+            drawField(mario_now)
         }
 
-        let timer = setInterval(pri, 100);
-        drawField(fieldee)
+        let timer = setInterval(pri, 0.01);
     </script>
     
 </body>
