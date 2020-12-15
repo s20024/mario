@@ -39,6 +39,7 @@
         function move_mario(e){
             if (e.key == "d") {
                 // キーボードの入力が「d」だった場合
+                /*
                 mario_now = mario_run_right1;
                 if (run_number == 1){
                     mario_now = mario_run_right1;
@@ -47,12 +48,14 @@
                     mario_now = mario_run_right2;
                     run_number = 1;
                 }
-                position[0] = position[0] + 0.2;
-                drawField(mario_now)
+                position[0] = position[0] + 0.1;
+                */
+                mario_move = 0.1;
 
             } else if (e.key == "a"){
 
                 // キーボードの入力が「a」だった場合
+                /*
                 mario_now = mario_run_left1;
                 if (run_number == 1){
                     mario_now = mario_run_left1;
@@ -61,7 +64,9 @@
                     mario_now = mario_run_left2;
                     run_number = 1;
                 }
-                position[0] = position[0] - 0.2;
+                position[0] = position[0] - 0.1;
+                */
+                mario_move = -0.1;
 
             } else if (e.key == " "){
 
@@ -95,10 +100,12 @@
         function stop_mario(e){
             if (e.key == "d"){
                 mario_now = mario_normal_right;
+                mario_move = 0;
                 mario_lr = "r";
             } else if (e.key == "a"){
                 mario_now = mario_normal_left;
                 mario_lr = "l";
+                mario_move = 0;
             } else if (e.key == " "){
                 clearinterval(mario_jump_set);
             }
@@ -243,6 +250,7 @@
         let run_number = 1;
 
         // マリオの初期ポジション&右左
+        let mario_move = 0;
         let position = [6, 7];
         let fast_position = [6, 7];
         let mario_lr = "r";
@@ -251,6 +259,20 @@
 
         // 書き込みを行う関数を呼び出す関数
         function pri(){
+            position[0] = position[0] + mario_move;
+            if (mario_move == 0.1 && run_number == 1){
+                mario_now = mario_run_right1;
+                run_number = 2;
+            } else if (mario_move == 0.1 && run_number == 2){
+                mario_now = mario_run_right2;
+                run_number = 1;
+            } else if (mario_move == -0.1 && run_number == 1){
+                mario_now = mario_run_left1;
+                run_number = 2;
+            } else if (mario_move == -0.1 && run_number == 2){
+                mario_now = mario_run_left2;
+                run_number = 1;
+            }
             drawField(mario_now)
         }
 
