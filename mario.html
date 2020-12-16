@@ -3,12 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>良太（マリオ）</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        h1 {
+            padding: 0;
+            float: left;
+        }
+
+        h2 {
+            float: left;
+            padding: 0 20px;
+        }
+
+        .main {
+            float:center;
+        }
+
+    </style>
 </head>
+
 <body>
-    
+
+    <div class="head">
+        <h1>操作の仕方</h1>
+        <h2>「h」左に走る</h2>
+        <h2>「l」右に走る</h2>
+        <h2>「k」ジャンプする</h2>
+    </div>
+
+    <div class="main">
         <canvas width="1600" height="800" id="canvas" style="border:1px solid black"></canvas>
     </div>
+
     <script>
         // 初期設定~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // canvasの設定
@@ -20,18 +45,36 @@
         document.addEventListener("keyup", stop_mario);
 
 
-        // 関数~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        // 画面出力する関数
-        function drawField(test){
-            CONTEXT.clearRect(0, 0, 1600, 800);
+        // 表示する関数~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // マリオの表示をする関数
+        function draw_mario(){
+            position[0] = position[0] + mario_move;
+            if (mario_move == 0.05 && run_number == 1){
+                mario_now = mario_run_right1;
+                run_number = 2;
+            } else if (mario_move == 0.05 && run_number == 2){
+                mario_now = mario_run_right2;
+                run_number = 1;
+            } else if (mario_move == -0.05 && run_number == 1){
+                mario_now = mario_run_left1;
+                run_number = 2;
+            } else if (mario_move == -0.05 && run_number == 2){
+                mario_now = mario_run_left2;
+                run_number = 1;
+            }
+
             for (let i = 0; i < 16; i++){
                 for (let j = 0; j < 16; j++){
-                    if (test[i][j] != "affffff"){
-                        CONTEXT.fillStyle = test[i][j];
+                    if (mario_now[i][j] != "affffff"){
+                        CONTEXT.fillStyle = mario_now[i][j];
                         CONTEXT.fillRect(j * 5 + position[0] * 80, i * 5 + position[1] * 80, 5, 5);
                     }
                 }
             }
+        }
+
+        // フィールドの表示の関数
+        function draw_field(){
             for (let i = 0; i < 10; i++) {
                 for (let j = 0; j < 20; j++) {
                 if (field[i][j] > 0) {
@@ -56,7 +99,29 @@
             }
         }
 
+        // クリボーの表示の関数
+        function draw_kuribo(){
+            kuribo_position[0] = kuribo_position[0] + kuribo_move;
+            if (kuribo_run_number == 1){
+                kuribo_now = kuribo_run1;
+                kuribo_run_number = 2;
+            } else if (kuribo_run_number == 2){
+                kuribo_now = kuribo_run2;
+                kuribo_run_number = 1;
+            } 
 
+            for (let i = 0; i < 16; i++){
+                for (let j = 0; j < 16; j++){
+                    if (kuribo_now[i][j] != "affffff"){
+                        CONTEXT.fillStyle = kuribo_now[i][j];
+                        CONTEXT.fillRect(j * 5 + kuribo_position[0] * 80, i * 5 + kuribo_position[1] * 80, 5, 5);
+                    }
+                }
+            }
+        }
+
+
+        // 関数~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         //ジャンプの関数
         function jump1(){
             mario_jump();
@@ -69,7 +134,7 @@
 
         // キーボードの入力を受け取り、右左にマリオを動かす関数
         function move_mario(e){
-            if (e.key == "d") {
+            if (e.key == "l") {
                 // キーボードの入力が「d」だった場合
                 /*
                 mario_now = mario_run_right1;
@@ -82,9 +147,9 @@
                 }
                 position[0] = position[0] + 0.1;
                 */
-                mario_move = 0.1;
+                mario_move = 0.05;
 
-            } else if (e.key == "a"){
+            } else if (e.key == "h"){
 
                 // キーボードの入力が「a」だった場合
                 /*
@@ -98,9 +163,9 @@
                 }
                 position[0] = position[0] - 0.1;
                 */
-                mario_move = -0.1;
+                mario_move = -0.05;
 
-            } else if (e.key == " " && position[1] == 7){
+            } else if (e.key == "k" && position[1] == 7){
 
                 // キーボードの入力がスペースだった場合
                 mario_now = (mario_lr == "r") ? mario_jump_right: mario_jump_left;
@@ -136,15 +201,15 @@
 
         // 入力が終わった後マリオの描写を治す関数
         function stop_mario(e){
-            if (e.key == "d"){
+            if (e.key == "l"){
                 mario_now = mario_normal_right;
                 mario_move = 0;
                 mario_lr = "r";
-            } else if (e.key == "a"){
+            } else if (e.key == "h"){
                 mario_now = mario_normal_left;
                 mario_lr = "l";
                 mario_move = 0;
-            } else if (e.key == " "){
+            } else if (e.key == "k"){
                 //clearinterval(mario_jump_set);
             }
         }
@@ -278,6 +343,30 @@
             ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"]
         ]
 
+        // クリボー
+        let kuribo_run1 = [
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "#ce6c39", "#000000", "#000000", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#000000", "#000000", "#ce6c39", "affffff", "affffff"],
+            ["affffff", "#ce6c39", "#ce6c39", "#ce6c39", "#ffcc99", "#000000", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#000000", "#ffcc99", "#ce6c39", "#ce6c39", "#ce6c39", "affffff"],
+            ["affffff", "#ce6c39", "#ce6c39", "#ce6c39", "#ffcc99", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#ffcc99", "#ce6c39", "#ce6c39", "#ce6c39", "affffff"],
+            ["#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ffcc99", "#000000", "#ffcc99", "#ce6c39", "#ce6c39", "#ffcc99", "#000000", "#ffcc99", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39"],
+            ["#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ffcc99", "#ffcc99", "#ffcc99", "#ce6c39", "#ce6c39", "#ffcc99", "#ffcc99", "#ffcc99", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39"],
+            ["#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39"],
+            ["affffff", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#000000", "#000000", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "#000000", "#000000", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#000000", "#000000", "#000000", "#000000", "#000000", "affffff"],
+            ["affffff", "affffff", "affffff", "#000000", "#000000", "#000000", "#ffcc99", "#ffcc99", "#ffcc99", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "#000000", "affffff", "affffff", "#000000", "#000000", "#000000", "#000000", "affffff", "affffff", "affffff"]
+        ]
+
+        // クリボー２
+        let kuribo_run2 = rev(kuribo_run1)
+
+        // フィールド
         let field = [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -291,9 +380,30 @@
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ]
 
+        //地面ブロック
+        let jimen_brock = [
+            ["#cc6a03", "#ffeec5", "#ffeec5", "#ffeec5", "#ffeec5", "#ffeec5", "#ffeec5", "#ffeec5", "#ffeec5", "#321000", "#cc6a03", "#ffeec5", "#ffeec5", "#ffeec5", "#ffeec5", "#cc6a03"],
+            ["#ffeec5", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#321000", "#ffeec5", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#321000"],
+            ["#ffeec5", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#321000", "#ffeec5", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#321000"],
+            ["#ffeec5", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#321000", "#ffeec5", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#321000"],
+            ["#ffeec5", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#321000", "#ffeec5", "#321000", "#cc6a03", "#cc6a03", "#cc6a03", "#321000"],
+            ["#ffeec5", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#321000", "#cc6a03", "#321000", "#321000", "#321000", "#321000", "#cc6a03"],
+            ["#ffeec5", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#321000", "#ffeec5", "#ffeec5", "#ffeec5", "#ffeec5", "#ffeec5", "#321000"],
+            ["#ffeec5", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#321000", "#ffeec5", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#321000"],
+            ["#ffeec5", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#321000", "#ffeec5", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#321000"],
+            ["#ffeec5", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#321000", "#ffeec5", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#321000"],
+            ["#321000", "#321000", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#321000", "#ffeec5", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#321000"],
+            ["#ffeec5", "#ffeec5", "#321000", "#321000", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#321000", "#ffeec5", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#321000"],
+            ["#ffeec5", "#cc6a03", "#ffeec5", "#ffeec5", "#321000", "#321000", "#321000", "#321000", "#ffeec5", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#321000"],
+            ["#ffeec5", "#cc6a03", "#cc6a03", "#cc6a03", "#ffeec5", "#ffeec5", "#ffeec5", "#321000", "#ffeec5", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#321000"],
+            ["#ffeec5", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#321000", "#ffeec5", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#cc6a03", "#321000", "#321000"],
+            ["#cc6a03", "#321000", "#321000", "#321000", "#321000", "#321000", "#321000", "#cc6a03", "#ffeec5", "#321000", "#321000", "#321000", "#321000", "#321000", "#321000", "#cc6a03"]
+        ]
+
 
 
         // 本体コード~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // マリオの設定&設置~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // プリントするマリオの設定
         let mario_now = mario_normal_right;
 
@@ -306,29 +416,25 @@
         let fast_position = [6, 7];
         let mario_lr = "r";
         let mario_ud = "u";
-        // let c = 1;
+        
+        // クリボーの設定&設置~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        let kuribo_move = -0.005;
+        let kuribo_position = [12, 7];
+        let kuribo_run_number = 1;
+        let kuribo_now = [];
+
 
         // 書き込みを行う関数を呼び出す関数
         function pri(){
-            position[0] = position[0] + mario_move;
-            if (mario_move == 0.1 && run_number == 1){
-                mario_now = mario_run_right1;
-                run_number = 2;
-            } else if (mario_move == 0.1 && run_number == 2){
-                mario_now = mario_run_right2;
-                run_number = 1;
-            } else if (mario_move == -0.1 && run_number == 1){
-                mario_now = mario_run_left1;
-                run_number = 2;
-            } else if (mario_move == -0.1 && run_number == 2){
-                mario_now = mario_run_left2;
-                run_number = 1;
-            }
-            drawField(mario_now)
+            CONTEXT.clearRect(0, 0, 1600, 800);
+            draw_mario()
+            draw_field()
+            draw_kuribo()
         }
 
         // 書き込みを行う関数を無限ループするやつ
         let timer = setInterval(pri, 0.01);
     </script>
+
 </body>
 </html>
