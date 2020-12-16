@@ -2,11 +2,11 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>test</title>
+    <title>良太（マリオ）</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="main">
+    
         <canvas width="1600" height="800" id="canvas" style="border:1px solid black"></canvas>
     </div>
     <script>
@@ -17,8 +17,7 @@
 
         // 入力値の取得の設定
         document.addEventListener("keydown", move_mario);
-        document.addEventListener("keyup", stop_mario)
-
+        document.addEventListener("keyup", stop_mario);
 
 
         // 関数~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -33,14 +32,46 @@
                     }
                 }
             }
+            for (let i = 0; i < 10; i++) {
+                for (let j = 0; j < 20; j++) {
+                if (field[i][j] > 0) {
+                    switch (field[i][j]) {
+                    case 1:
+                        CONTEXT.fillStyle = "red";
+                        break;
+                    case 2:
+                        CONTEXT.fillStyle = "yellow";
+                        break;
+                    case 3:
+                        CONTEXT.fillStyle = "blue";
+                        break;
+                    case 4:
+                        CONTEXT.fillStyle = "green";
+                        break;
+
+                    }
+                    CONTEXT.fillRect(j * 80, i * 80, 80, 80);
+                }
+                }
+            }
         }
 
 
-        // 入力を受け取り、右左にマリオを動かす関数
+        //ジャンプの関数
+        function jump1(){
+            mario_jump();
+            setTimeout(jump2, 10);
+        }
+        function jump2(){
+            mario_jump();
+            setTimeout(jump1, 10)
+        }
+
+        // キーボードの入力を受け取り、右左にマリオを動かす関数
         function move_mario(e){
-            if (e.key == "ArrowDown") {
-                down_speed = 0.2;
-            } else if (e.key == "ArrowRight") {
+            if (e.key == "d") {
+                // キーボードの入力が「d」だった場合
+                /*
                 mario_now = mario_run_right1;
                 if (run_number == 1){
                     mario_now = mario_run_right1;
@@ -49,10 +80,14 @@
                     mario_now = mario_run_right2;
                     run_number = 1;
                 }
-                position[0] = position[0] + 0.2;
-                drawField(mario_now)
+                position[0] = position[0] + 0.1;
+                */
+                mario_move = 0.1;
 
-            } else if (e.key == "ArrowLeft"){
+            } else if (e.key == "a"){
+
+                // キーボードの入力が「a」だった場合
+                /*
                 mario_now = mario_run_left1;
                 if (run_number == 1){
                     mario_now = mario_run_left1;
@@ -61,17 +96,56 @@
                     mario_now = mario_run_left2;
                     run_number = 1;
                 }
-                position[0] = position[0] - 0.2;
+                position[0] = position[0] - 0.1;
+                */
+                mario_move = -0.1;
+
+            } else if (e.key == " " && position[1] == 7){
+
+                // キーボードの入力がスペースだった場合
+                mario_now = (mario_lr == "r") ? mario_jump_right: mario_jump_left;
+                let kome = 0;
+                setTimeout(jump1, 1)
+                //let mario_jump_set = setInterval(mario_jump, 10);
+                //for (let a = 0; a < 10; a ++){
+                    //sleep(2, mario_jump)
+                    //setTimeout(mario_jump, 100)
+                //}
+            }
+        }
+
+
+        // ジャンプをする関数
+        function mario_jump(){
+            if (mario_ud == "u" && fast_position[1] - 4 <= position[1]){
+                position[1] = position[1] - 0.2;
+            } else if (mario_ud == "u"){
+                mario_ud = "d";
+                //position[1] = fast_position[1] - 4;
+            } else if (mario_ud == "d" && position[1] < fast_position[1]){
+                position[1] = position[1] + 0.2;
+            } else if (mario_ud == "d"){
+                mario_ud = "u";
+                position[1] = fast_position[1];
+                mario_now = (mario_lr == "r") ? mario_normal_right: mario_normal_left;
+                clearinterval(mario_jump_set);
+                
             }
         }
 
 
         // 入力が終わった後マリオの描写を治す関数
         function stop_mario(e){
-            if (e.key == "ArrowRight"){
+            if (e.key == "d"){
                 mario_now = mario_normal_right;
-            } else if (e.key == "ArrowLeft"){
+                mario_move = 0;
+                mario_lr = "r";
+            } else if (e.key == "a"){
                 mario_now = mario_normal_left;
+                mario_lr = "l";
+                mario_move = 0;
+            } else if (e.key == " "){
+                //clearinterval(mario_jump_set);
             }
         }
 
@@ -204,6 +278,19 @@
             ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"]
         ]
 
+        let field = [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 1, 1, 1, 1 ,1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ]
+
 
 
         // 本体コード~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -213,16 +300,35 @@
         // 走るマリオの番号
         let run_number = 1;
 
-        // マリオの初期ポジション
+        // マリオの初期ポジション&右左
+        let mario_move = 0;
         let position = [6, 7];
+        let fast_position = [6, 7];
+        let mario_lr = "r";
+        let mario_ud = "u";
+        // let c = 1;
 
-        let count = 0;
+        // 書き込みを行う関数を呼び出す関数
         function pri(){
+            position[0] = position[0] + mario_move;
+            if (mario_move == 0.1 && run_number == 1){
+                mario_now = mario_run_right1;
+                run_number = 2;
+            } else if (mario_move == 0.1 && run_number == 2){
+                mario_now = mario_run_right2;
+                run_number = 1;
+            } else if (mario_move == -0.1 && run_number == 1){
+                mario_now = mario_run_left1;
+                run_number = 2;
+            } else if (mario_move == -0.1 && run_number == 2){
+                mario_now = mario_run_left2;
+                run_number = 1;
+            }
             drawField(mario_now)
         }
 
+        // 書き込みを行う関数を無限ループするやつ
         let timer = setInterval(pri, 0.01);
     </script>
-    
 </body>
 </html>

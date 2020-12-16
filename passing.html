@@ -3,12 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>良太（マリオ）</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        h1 {
+            padding: 0;
+            float: left;
+        }
+
+        h2 {
+            float: left;
+            padding: 0 20px;
+        }
+
+        .main {
+            float:center;
+        }
+
+    </style>
 </head>
+
 <body>
+
+    <div class="head">
+        <h1>操作の仕方</h1>
+        <h2>「h」左に走る</h2>
+        <h2>「l」右に走る</h2>
+        <h2>「k」ジャンプする</h2>
+    </div>
+
     <div class="main">
         <canvas width="1600" height="800" id="canvas" style="border:1px solid black"></canvas>
     </div>
+
     <script>
         // 初期設定~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // canvasの設定
@@ -69,7 +94,7 @@
 
         // キーボードの入力を受け取り、右左にマリオを動かす関数
         function move_mario(e){
-            if (e.key == "d") {
+            if (e.key == "l") {
                 // キーボードの入力が「d」だった場合
                 /*
                 mario_now = mario_run_right1;
@@ -84,7 +109,7 @@
                 */
                 mario_move = 0.1;
 
-            } else if (e.key == "a"){
+            } else if (e.key == "h"){
 
                 // キーボードの入力が「a」だった場合
                 /*
@@ -100,7 +125,7 @@
                 */
                 mario_move = -0.1;
 
-            } else if (e.key == " " && position[1] == 7){
+            } else if (e.key == "k" && position[1] == 7){
 
                 // キーボードの入力がスペースだった場合
                 mario_now = (mario_lr == "r") ? mario_jump_right: mario_jump_left;
@@ -136,15 +161,15 @@
 
         // 入力が終わった後マリオの描写を治す関数
         function stop_mario(e){
-            if (e.key == "d"){
+            if (e.key == "l"){
                 mario_now = mario_normal_right;
                 mario_move = 0;
                 mario_lr = "r";
-            } else if (e.key == "a"){
+            } else if (e.key == "h"){
                 mario_now = mario_normal_left;
                 mario_lr = "l";
                 mario_move = 0;
-            } else if (e.key == " "){
+            } else if (e.key == "k"){
                 //clearinterval(mario_jump_set);
             }
         }
@@ -330,5 +355,6 @@
         // 書き込みを行う関数を無限ループするやつ
         let timer = setInterval(pri, 0.01);
     </script>
+
 </body>
 </html>

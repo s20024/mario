@@ -11,4 +11,3 @@ with open("passing.txt", "a") as f:
     for a in split_data[1:]:
         data = [i for i in a]
         f.write('["' + '", "'.join(data) + '"],\n')
-        print(data)
