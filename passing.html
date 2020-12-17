@@ -46,6 +46,14 @@
         document.addEventListener("keydown", move_mario);
         document.addEventListener("keyup", stop_mario);
 
+        function getRandom_w() {
+            return Math.random() * (18) + 1;
+        }
+
+        function getRandom_h() {
+            return Math.random() * (6) + 1;
+        }
+
 
         // 表示する関数~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // マリオの表示をする関数
@@ -81,6 +89,15 @@
             }
         }
 
+
+        // マリオの体力の表示
+        function draw_mario_hp(){
+            CONTEXT.clearRect(0, 720, 200, 80);
+            CONTEXT.fillStyle = "green"
+            CONTEXT.fillRect(0, 740, mario_hp* 2, 40);
+        }
+
+
         //フィールドブロック表示の関数
         function draw_brock(brock_height, brock_width, brock){
             for (let i = 0; i < 16; i++){
@@ -93,24 +110,31 @@
             }
         }
 
+
         // フィールドの表示の関数
         function draw_field(){
             for (let i = 0; i < 10; i++) {
                 for (let j = 0; j < 20; j++) {
-                if (field[i][j] > 0) {
+                if (field[i][j] != 0) {
                     switch (field[i][j]) {
                     case 1:
                         // CONTEXT.fillStyle = "red";
                         draw_brock(i, j, jimen_brock);
                         break;
-                    case 2:
-                        CONTEXT.fillStyle = "yellow";
+                    case -1:
+                        // CONTEXT.fillStyle = "yellow";
+                        // CONTEXT.fillRect(j * 80, i * 80, 80, 80);
+                        draw_brock(i, j, left_ya);
                         break;
-                    case 3:
-                        CONTEXT.fillStyle = "blue";
+                    case -2:
+                        // CONTEXT.fillStyle = "blue";
+                        // CONTEXT.fillRect(j * 80, i * 80, 80, 80);
+                        draw_brock(i, j, string_H);
                         break;
-                    case 4:
-                        CONTEXT.fillStyle = "green";
+                    case -3:
+                        // CONTEXT.fillStyle = "green";
+                        // CONTEXT.fillRect(j * 80, i * 80, 80, 80);
+                        draw_brock(i, j, string_P);
                         break;
 
                     }
@@ -122,18 +146,30 @@
 
         // クリボーの表示の関数
         function draw_kuribo(){
-            kuribo_position[0] = kuribo_position[0] + kuribo_move;
-            if (kuribo_run_number == 1){
-                kuribo_now = kuribo_run1;
-                kuribo_run_number = 2;
-            } else if (kuribo_run_number == 2){
-                kuribo_now = kuribo_run2;
-                kuribo_run_number = 1;
-            } 
-            if (kuribo_position[0] <= 0){
-                kuribo_move = 0.005;
-            } else if (kuribo_position[0] >= 19){
-                kuribo_move = -0.005;
+            if (kuribo_fn == "f"){
+                kuribo_now = kuribo_flat;
+            } else {
+                kuribo_position[0] = kuribo_position[0] + kuribo_move;
+                if (kuribo_run_number == 1){
+                    kuribo_now = kuribo_run1;
+                    kuribo_run_number = 2;
+                } else if (kuribo_run_number == 2){
+                    kuribo_now = kuribo_run2;
+                    kuribo_run_number = 1;
+                } 
+                if (kuribo_position[0] <= 0){
+                    kuribo_move = 0.005;
+                } else if (kuribo_position[0] >= 19){
+                    kuribo_move = -0.005;
+                }
+
+                if (kuribo_ad == "d"){
+                    kuribo_now = [];
+                }
+
+                if (kuribo_position[1] <= 7){
+                    kuribo_position[1] = kuribo_position[1] + 0.01;
+                }
             }
 
             for (let i = 0; i < 16; i++){
@@ -224,6 +260,41 @@
             }
         }
 
+        //ジャンプの関数
+        function litle_jump1(){
+            mario_litle_jump();
+            setTimeout(litle_jump2, 10);
+        }
+        function litle_jump2(){
+            mario_litle_jump();
+            setTimeout(litle_jump1, 10)
+        }
+
+
+        // リトルジャンプをする関数
+        function mario_litle_jump(){
+            if (mario_ud == "u" && fast_position[1] - 2 <= position[1]){
+                position[1] = position[1] - 0.2;
+            } else if (mario_ud == "u"){
+                mario_ud = "d";
+                //position[1] = fast_position[1] - 4;
+            } else if (mario_ud == "d" && position[1] < fast_position[1]){
+                position[1] = position[1] + 0.2;
+            } else if (mario_ud == "d"){
+                mario_ud = "u";
+                position[1] = fast_position[1];
+                mario_now = (mario_lr == "r") ? mario_normal_right: mario_normal_left;
+                clearinterval(mario_litle_jump_set);
+                
+            }
+        }
+
+        //くりぼー
+        function kuribo_ff(){
+            kuribo_fn = "n";
+            setTimeout(arryve_kuribo, 3000);
+        }
+
 
         // 入力が終わった後マリオの描写を治す関数
         function stop_mario(e){
@@ -238,6 +309,13 @@
             } else if (e.key == "k"){
                 //clearinterval(mario_jump_set);
             }
+        }
+
+
+        // クリボーの生き返る関数
+        function arryve_kuribo(){
+            kuribo_ad = "a";
+            kuribo_position = [getRandom_w(), getRandom_h()]
         }
 
 
@@ -392,6 +470,26 @@
         // クリボー２
         let kuribo_run2 = rev(kuribo_run1)
 
+        // クリボーデス
+        let kuribo_flat = [
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "affffff", "affffff", "affffff"],
+            ["affffff", "#ce6c39", "#ce6c39", "#000000", "#000000", "#000000", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#000000", "#000000", "#000000", "#ce6c39", "#ce6c39", "affffff"],
+            ["#ce6c39", "#ce6c39", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#000000", "#000000", "#000000", "#000000", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#ce6c39", "#ce6c39"],
+            ["#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39", "#ce6c39"],
+            ["affffff", "affffff", "affffff", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "#ffcc99", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "#000000", "#000000", "#000000", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "#000000", "#000000", "#000000", "affffff"]
+        ]
+
         // フィールド
         let field = [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -403,7 +501,68 @@
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [1, 1, 1, 1, 1 ,1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            [0, 0, 0, -1, -2, -3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ]
+
+
+        // 左矢印←
+        let left_ya = [
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000"],
+            ["#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000"],
+            ["affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"]
+        ]
+
+        // 文字(H)
+        let string_H = [
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff"],
+            ["affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff"],
+            ["affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff"],
+            ["affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff"],
+            ["affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff"],
+            ["affffff", "affffff", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "affffff", "affffff"],
+            ["affffff", "affffff", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "affffff", "affffff"],
+            ["affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff"],
+            ["affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff"],
+            ["affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff"],
+            ["affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff"],
+            ["affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"]
+        ]
+
+        // 文字(P)
+        let string_P = [
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "#000000", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "#000000", "#000000", "#000000", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "#000000", "#000000", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"],
+            ["affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff", "affffff"]
         ]
 
         //地面ブロック
@@ -449,31 +608,78 @@
         let kuribo_position = [12, 7];
         let kuribo_run_number = 1;
         let kuribo_now = [];
+        let kuribo_ad = "a";
+        let kuribo_fn = "n";
 
         // フィールドの書き込み
         draw_field()
+
+
         // 書き込みを行う関数を呼び出す関数
         function pri(){
             CONTEXT.clearRect(0, 0, 1600, 640);
-            CONTEXT.clearRect(0, 720, 1600, 80);
             draw_mario()
             draw_kuribo()
-            if (position[0] - 0.7 <= kuribo_position[0] && kuribo_position[0] <=  position[0] + 0.7){
-                if (position[1] <= kuribo_position[1] - 0.5){
-                    mario_hp = mario_hp + 10;
-                } else {
+            draw_mario_hp();
+            if (kuribo_ad == "a" && position[0] - 0.7 <= kuribo_position[0] && kuribo_position[0] <=  position[0] + 0.7){
+                if (kuribo_position[1] - 1.5 <= position[1] && position[1] <= kuribo_position[1] - 0.5 && mario_ud == "d"){
+                    if ( mario_hp <= 90){
+                        mario_hp = mario_hp + 10;
+                    } else if( 90 < mario_hp && mario_hp <= 100){
+                        mariohp = 100;
+                    }
+                    kuribo_ad = "d";
+                    kuribo_fn = "f";
+                    setTimeout(kuribo_ff(), 2000);
+                    litle_jump1();
+
+                    setTimeout(arryve_kuribo, 3000);
+                } else if (kuribo_position[1] - 0.5 <= position[1] && position[1] <= kuribo_position[1]) {
                     mario_hp = mario_hp - 1;
                 }
-            }
+            } 
             if (mario_hp <= 0){
-                clearInterval(timer)
+                mario_ud = "u";
+                clearInterval(timer);
+                mario_now = mario_deth;
+                deth_jump1();
                 // position[1] = 0;
             }
-            draw_mario_hp();
+            
         }
 
         // 書き込みを行う関数を無限ループするやつ
         let timer = setInterval(pri, 0.01);
+
+        // マリオが死んだ場合のしょり~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // deth_jumpの関数
+        function deth_jump1(){
+            CONTEXT.clearRect(0, 0, 1600, 640);
+            mario_deth_jump();
+            draw_mario();
+            draw_kuribo();
+            setTimeout(deth_jump2, 10);
+        }
+        function deth_jump2(){
+            CONTEXT.clearRect(0, 0, 1600, 640);
+            mario_deth_jump();
+            draw_mario();
+            draw_kuribo();
+            setTimeout(deth_jump1, 10)
+        }
+
+        function mario_deth_jump(){
+            if (mario_ud == "u" && fast_position[1] - 2 <= position[1]){
+                position[1] = position[1] - 0.2;
+            } else if (mario_ud == "u"){
+                mario_ud = "d";
+                //position[1] = fast_position[1] - 4;
+            } else if (mario_ud == "d"){
+                position[1] = position[1] + 0.2;
+            }
+        }
+        // deth_jump1();
+
     </script>
 
 </body>
