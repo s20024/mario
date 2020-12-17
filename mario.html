@@ -73,6 +73,18 @@
             }
         }
 
+        //フィールドブロック表示の関数
+        function draw_brock(brock_height, brock_width, brock){
+            for (let i = 0; i < 16; i++){
+                for (let j = 0; j < 16; j++){
+                    if (brock[i][j] != "affffff"){
+                        CONTEXT.fillStyle = brock[i][j];
+                        CONTEXT.fillRect(j * 5 + brock_width * 80, i * 5 + brock_height * 80, 5, 5);
+                    }
+                }
+            }
+        }
+
         // フィールドの表示の関数
         function draw_field(){
             for (let i = 0; i < 10; i++) {
@@ -80,7 +92,8 @@
                 if (field[i][j] > 0) {
                     switch (field[i][j]) {
                     case 1:
-                        CONTEXT.fillStyle = "red";
+                        // CONTEXT.fillStyle = "red";
+                        draw_brock(i, j, jimen_brock);
                         break;
                     case 2:
                         CONTEXT.fillStyle = "yellow";
@@ -93,7 +106,7 @@
                         break;
 
                     }
-                    CONTEXT.fillRect(j * 80, i * 80, 80, 80);
+                    // CONTEXT.fillRect(n * 5, k * 5, 80, 80);
                 }
                 }
             }

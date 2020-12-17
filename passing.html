@@ -39,6 +39,8 @@
         // canvasの設定
         const CANVAS = document.getElementById("canvas");
         const CONTEXT = CANVAS.getContext("2d")
+        const back = document.getElementById("canvas");
+        const komesann = back.getContext("2d");
 
         // 入力値の取得の設定
         document.addEventListener("keydown", move_mario);
@@ -63,6 +65,12 @@
                 run_number = 1;
             }
 
+            if (position[0] <= 0){
+                mario_move = 0;
+            } else if (position[0] >= 19){
+                mario_move = 0;
+            }
+
             for (let i = 0; i < 16; i++){
                 for (let j = 0; j < 16; j++){
                     if (mario_now[i][j] != "affffff"){
@@ -78,8 +86,8 @@
             for (let i = 0; i < 16; i++){
                 for (let j = 0; j < 16; j++){
                     if (brock[i][j] != "affffff"){
-                        CONTEXT.fillStyle = brock[i][j];
-                        CONTEXT.fillRect(j * 5 + brock_width * 80, i * 5 + brock_height * 80, 5, 5);
+                        komesann.fillStyle = brock[i][j];
+                        komesann.fillRect(j * 5 + brock_width * 80, i * 5 + brock_height * 80, 5, 5);
                     }
                 }
             }
@@ -122,6 +130,11 @@
                 kuribo_now = kuribo_run2;
                 kuribo_run_number = 1;
             } 
+            if (kuribo_position[0] <= 0){
+                kuribo_move = 0.005;
+            } else if (kuribo_position[0] >= 19){
+                kuribo_move = -0.005;
+            }
 
             for (let i = 0; i < 16; i++){
                 for (let j = 0; j < 16; j++){
@@ -425,6 +438,7 @@
 
         // マリオの初期ポジション&右左
         let mario_move = 0;
+        let mario_hp = 100;
         let position = [6, 7];
         let fast_position = [6, 7];
         let mario_lr = "r";
@@ -436,13 +450,24 @@
         let kuribo_run_number = 1;
         let kuribo_now = [];
 
-
+        // フィールドの書き込み
+        draw_field()
         // 書き込みを行う関数を呼び出す関数
         function pri(){
-            CONTEXT.clearRect(0, 0, 1600, 800);
+            CONTEXT.clearRect(0, 0, 1600, 640);
             draw_mario()
-            draw_field()
             draw_kuribo()
+            if (position[0] - 0.7 <= kuribo_position[0] && kuribo_position[0] <=  position[0] + 0.7){
+                if (position[1] <= kuribo_position[1] - 0.5){
+                    mario_hp = mario_hp + 10;
+                } else {
+                    mario_hp = mario_hp - 1;
+                }
+            }
+            if (mario_hp <= 0){
+                clearInterval(timer)
+                // position[1] = 0;
+            }
         }
 
         // 書き込みを行う関数を無限ループするやつ
