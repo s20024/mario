@@ -455,6 +455,7 @@
         // 書き込みを行う関数を呼び出す関数
         function pri(){
             CONTEXT.clearRect(0, 0, 1600, 640);
+            CONTEXT.clearRect(0, 720, 1600, 80);
             draw_mario()
             draw_kuribo()
             if (position[0] - 0.7 <= kuribo_position[0] && kuribo_position[0] <=  position[0] + 0.7){
@@ -468,6 +469,7 @@
                 clearInterval(timer)
                 // position[1] = 0;
             }
+            draw_mario_hp();
         }
 
         // 書き込みを行う関数を無限ループするやつ
